@@ -1,13 +1,9 @@
 <script lang="ts">
-	export let value: number;
+	import InputValue from './InputValue.svelte';
+
+	export let value: number | null;
 </script>
 
 <td>
-	<input type="number" bind:value />
+	<InputValue bind:value />
 </td>
-
-<style>
-	input[type='number'] {
-		width: 32px;
-	}
-</style>

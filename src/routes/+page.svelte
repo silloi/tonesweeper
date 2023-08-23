@@ -3,6 +3,7 @@
 
 	import Cell from '../components/Cell.svelte';
 	import Stats from '../components/Stats.svelte';
+	import InputValue from '../components/InputValue.svelte';
 
 	const PITCH_CLASS_TO_ALPHABET = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
@@ -17,11 +18,11 @@
 		[12, 12, 16, 12, 7, 7, 7, 7],
 		[12, 12, 16, 12, 7, 7, 19, 19],
 		[17, 16, 14, 12, 11, 12, 11, 12],
-		[14, 12, 11, 9, 7, 7, 7, 7],
-		[12, 12, 16, 12, 7, 7, 7, 7],
-		[16, 16, 19, 16, 12, 12, 16, 12],
-		[14, 11, 12, 9, 11, 7, 9, 6],
-		[7, 9, 11, 12, 14, 16, 18, 19]
+		[14, 12, 11, 9, 7, 7, 7, 7]
+		// [12, 12, 16, 12, 7, 7, 7, 7],
+		// [16, 16, 19, 16, 12, 12, 16, 12],
+		// [14, 11, 12, 9, 11, 7, 9, 6],
+		// [7, 9, 11, 12, 14, 16, 18, 19]
 	];
 
 	let offset = 60;
@@ -33,27 +34,46 @@
 
 		matrix.forEach((row, rowIndex) => {
 			row.forEach((cell, cellIndex) => {
-				const keyNum = cell + offset;
-				const time = now + rowIndex * 1 + cellIndex * 0.125;
-				synth.triggerAttackRelease(convertNumberToTone(keyNum), '16n', time);
+				const toneNum = cell;
+				const offsetNum = offset;
+				if (toneNum && offsetNum) {
+					const keyNum = toneNum + offsetNum;
+					const time = now + rowIndex * 1 + cellIndex * 0.125;
+					synth.triggerAttackRelease(convertNumberToTone(keyNum), '16n', time);
+				}
 			});
 		});
+	};
+
+	const addRows = () => {
+		matrix = [
+			...matrix,
+			new Array(8).fill(null),
+			new Array(8).fill(null),
+			new Array(8).fill(null),
+			new Array(8).fill(null)
+		];
+		console.log('matrix', matrix);
 	};
 </script>
 
 <h1>Tone Sweeper</h1>
 
-<div>
-	+ <input type="number" bind:value={offset} />
-</div>
+<main>
+	<section>
+		<div>
+			<span>+</span>
+			<InputValue bind:value={offset} />
+		</div>
+		<div>
+			<button type="button" on:click={play}>Play</button>
+		</div>
+	</section>
 
-<div>
 	<table>
 		<thead>
 			<tr>
-				{#each new Array(8) as _, index}
-					<td>{index}</td>
-				{/each}
+				<td colspan="8" />
 				<td>Max</td>
 				<td>Min</td>
 				<td>Mean</td>
@@ -67,9 +87,18 @@
 				<Stats {row} />
 			</tr>
 		{/each}
+		<tr>
+			<td colspan="8">
+				<button type="button" on:click={addRows}>Add Rows</button>
+			</td>
+		</tr>
 	</table>
-</div>
+</main>
 
-<div>
-	<button type="button" on:click={play}>Play</button>
-</div>
+<style>
+	section {
+		display: flex;
+		justify-content: space-between;
+		width: 256px;
+	}
+</style>
