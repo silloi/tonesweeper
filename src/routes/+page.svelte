@@ -1,11 +1,10 @@
 <script lang="ts">
 	import * as Tone from 'tone';
+	import { PITCH_CLASS_TO_ALPHABET } from '$lib/constants';
 
 	import Cell from '../components/Cell.svelte';
 	import Stats from '../components/Stats.svelte';
 	import InputValue from '../components/InputValue.svelte';
-
-	const PITCH_CLASS_TO_ALPHABET = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 	const convertNumberToTone = (keyNum: number) => {
 		const octave = Math.floor((keyNum - 12) / 12);
@@ -27,6 +26,8 @@
 
 	let offset = 60;
 	let matrix = sonatine;
+
+	let viewMode = 'duodecimal';
 
 	const play = () => {
 		const synth = new Tone.Synth().toDestination();
@@ -63,9 +64,17 @@
 	<section>
 		<div>
 			<span>+</span>
-			<InputValue bind:value={offset} />
+			<InputValue bind:value={offset} offset={null} {viewMode} />
 		</div>
 		<div>
+			<label>
+				<input type="radio" bind:group={viewMode} name="viewMode" value="duodecimal" />
+				Duodecimal
+			</label>
+			<label>
+				<input type="radio" bind:group={viewMode} name="viewMode" value="scientific" />
+				Scientific
+			</label>
 			<button type="button" on:click={play}>Play</button>
 		</div>
 	</section>
@@ -82,7 +91,7 @@
 		{#each matrix as row}
 			<tr>
 				{#each row as cell}
-					<Cell bind:value={cell} />
+					<Cell bind:value={cell} {offset} {viewMode} />
 				{/each}
 				<Stats {row} />
 			</tr>
@@ -99,6 +108,6 @@
 	section {
 		display: flex;
 		justify-content: space-between;
-		width: 256px;
+		width: 600px;
 	}
 </style>

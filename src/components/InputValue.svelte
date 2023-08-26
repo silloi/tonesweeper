@@ -1,9 +1,20 @@
 <script lang="ts">
-	import { parseIntFromDuodecimal, stringifyIntToDuodecimal } from '$lib/duodecimal';
+	import {
+		parseIntFromDuodecimal,
+		stringifyIntToDuodecimal,
+		stringifyIntToScientificAlphabet
+	} from '$lib/duodecimal';
 
 	export let value: number | null;
+	export let offset: number | null;
+	export let viewMode = 'duodecimal';
 
-	$: literal = stringifyIntToDuodecimal(value);
+	$: literal =
+		viewMode === 'duodecimal'
+			? stringifyIntToDuodecimal(value)
+			: viewMode === 'scientific'
+			? stringifyIntToScientificAlphabet(value && offset ? value + offset : null)
+			: null;
 
 	const handleKeydown = (event: KeyboardEvent) => {
 		const valueOrZero = value ?? 0;
@@ -27,7 +38,7 @@
 
 <style>
 	input[type='text'] {
-		width: 20px;
+		width: 32px;
 		font-size: 1rem;
 		text-align: right;
 	}
