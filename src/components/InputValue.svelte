@@ -1,4 +1,6 @@
 <script lang="ts">
+	import * as Tone from 'tone';
+	import { convertNumberToTone } from '$lib/convert';
 	import {
 		parseIntFromDuodecimal,
 		stringifyIntToDuodecimal,
@@ -27,17 +29,28 @@
 		} else if (event.key === 'ArrowDown') {
 			value = valueOrZero - 1;
 		}
+
+		play(value, offset);
 	};
 
-	const handleChange = (event: Event) => {
+	const handleInput = (event: Event) => {
 		const target = event.target as HTMLInputElement;
 		const targetValue = target.value;
 		const parsed = parseIntFromDuodecimal(targetValue);
 		value = parsed;
+
+		play(value, offset);
+	};
+
+	const play = (value: number | null, offset: number | null) => {
+		const synth = new Tone.Synth().toDestination();
+
+		const keyNum = value !== null && offset ? value + offset : null;
+		keyNum && synth.triggerAttackRelease(convertNumberToTone(keyNum), '16n');
 	};
 </script>
 
-<input type="text" bind:value={literal} on:keydown={handleKeydown} on:change={handleChange} />
+<input type="text" bind:value={literal} on:keydown={handleKeydown} on:input={handleInput} />
 <input type="hidden" bind:value />
 
 <style>
