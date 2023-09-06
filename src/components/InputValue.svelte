@@ -18,7 +18,11 @@
 
 	const handleKeydown = (event: KeyboardEvent) => {
 		const valueOrZero = value ?? 0;
-		if (event.key === 'ArrowUp') {
+		if (event.shiftKey && event.key === 'ArrowUp') {
+			value = valueOrZero + 12;
+		} else if (event.shiftKey && event.key === 'ArrowDown') {
+			value = valueOrZero - 12;
+		} else if (event.key === 'ArrowUp') {
 			value = valueOrZero + 1;
 		} else if (event.key === 'ArrowDown') {
 			value = valueOrZero - 1;
