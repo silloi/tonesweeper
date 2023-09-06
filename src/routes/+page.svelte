@@ -37,7 +37,7 @@
 			row.forEach((cell, cellIndex) => {
 				const toneNum = cell;
 				const offsetNum = offset;
-				if (toneNum && offsetNum) {
+				if (toneNum !== null && offsetNum) {
 					const keyNum = toneNum + offsetNum;
 					const time = now + rowIndex * 1 + cellIndex * 0.125;
 					synth.triggerAttackRelease(convertNumberToTone(keyNum), '16n', time);
